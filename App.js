@@ -1,5 +1,13 @@
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
 import React, {useState} from 'react';
+import {LastTime} from './src/LastTime';
 
 let timer = null;
 let ultimoTempo = [];
@@ -15,7 +23,7 @@ export default function App() {
   function vai() {
     if (timer !== null) {
       clearInterval(timer);
-      timer = null;
+
       setBotao('VAI');
     } else {
       timer = setInterval(() => {
@@ -48,7 +56,8 @@ export default function App() {
     }
 
     ultimoTempo = [...ultimoTempo, numero];
-    setUltimo(numero);
+
+    setUltimo(ultimoTempo);
     setNumero('00:00:00');
     ss = 0;
     mn = 0;
@@ -67,17 +76,22 @@ export default function App() {
           <Text style={styles.btnTexto}>{botao}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btn} onPress={limpar}>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={limpar}
+          disabled={timer === null ? true : false}>
           <Text style={styles.btnTexto}>Limpar</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.areaUltima}>
         <View style={styles.ultimoTempo}>
-          {ultimoTempo.map(item => {
-            return (
-              <Text style={styles.textoCorrida}> Ultimo tempo: {item} </Text>
-            );
-          })}
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={ultimo}
+            renderItem={({item}) => (
+              <LastTime data={item} key={Math.random()} />
+            )}
+          />
         </View>
       </View>
     </View>
@@ -118,6 +132,7 @@ const styles = StyleSheet.create({
   },
   areaUltima: {
     marginTop: 40,
+    height: 200,
   },
   textoCorrida: {
     fontSize: 25,
